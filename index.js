@@ -49,6 +49,18 @@ function getDoc(bucket, key) {
   });
 }
 
+function removeDoc(bucket, key) {
+  return new Promise((resolve, reject) => {
+    bucket.remove(key, (err, res) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(res);
+      }
+    });
+  });
+}
+
 function upsert(bucket, key, value, options = {}) {
   return new Promise((resolve, reject) => {
     bucket.upsert(key, value, options, (err, res) => {
