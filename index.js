@@ -49,9 +49,9 @@ function getDoc(bucket, key) {
   });
 }
 
-function upsert(bucket, key, value) {
+function upsert(bucket, key, value, options = {}) {
   return new Promise((resolve, reject) => {
-    bucket.upsert(key, value, (err, res) => {
+    bucket.upsert(key, value, options, (err, res) => {
       if (err) {
         reject(err);
       } else {
