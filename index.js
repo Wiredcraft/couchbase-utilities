@@ -185,7 +185,7 @@ const paginate = async (
   const rows = queryResult.filter((r) => r.key === startKey);
   const stopRecur = rows.length < viewOpts.limit;
 
-  debug("selected doc length: %d \n", res.length);
+  debug("selected doc length: %d \n", rows.length);
   await Promise.all(
     rows.map(async (row) => {
       return exec(bucket, row);
