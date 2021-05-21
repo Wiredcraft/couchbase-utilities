@@ -182,14 +182,13 @@ const paginate = async (
   const q = newViewQuery(designDoc, view, viewOpts);
   const queryResult = await queryView(bucket, q);
   const startKey = viewOpts.range[0];
-  const res = queryResult.filter((r) => r.key === startKey);
-  const stopRecur = res.length < viewOpts.limit;
+  const rows = queryResult.filter((r) => r.key === startKey);
+  const stopRecur = rows.length < viewOpts.limit;
 
   debug("selected doc length: %d \n", res.length);
-  const ids = res.map((r) => r.id);
   await Promise.all(
-    ids.map(async (id) => {
-      return exec(bucket, id);
+    rows.map(async (row) => {
+      return exec(bucket, row);
     })
   );
   debug("finished callback");
@@ -203,7 +202,7 @@ const paginate = async (
       view,
       viewOpts,
       exec,
-      ids[ids.length - 1]
+      rows[rows.length - 1].id
     );
   } else {
     console.log("pagination done");
@@ -286,6 +285,8 @@ module.exports = {
   query,
   ViewQuery,
   getDoc,
+  removeDoc,
+  delay,
   paginate,
   upsert,
   upsertViews,
