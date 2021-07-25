@@ -186,15 +186,21 @@ const paginate = async (
   const stopRecur = rows.length < viewOpts.limit;
 
   debug("selected doc length: %d \n", rows.length);
-  await Promise.all(
-    rows.map(async (row) => {
-      return exec(bucket, row);
-    })
-  );
+  try {
+    await Promise.all(
+      rows.map(async (row) => {
+        return exec(bucket, row);
+      })
+    );
+  } catch (err) {
+    // append the start doc id to the error so the caller knows where the iteration stopped.
+    err.startDocId = startkey_docid;
+    throw err;
+  }
   debug("finished callback");
   if (!stopRecur) {
-    const lag = 200;
-    console.log(`rest for ${lag} millseconds`);
+    const lag = viewOpts.lagForNextIteration || 200;
+    debug(`rest for ${lag} millseconds`);
     await delay(lag);
     await paginate(
       bucket,
