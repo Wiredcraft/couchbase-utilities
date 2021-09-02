@@ -282,6 +282,18 @@ async function buildIndexes(buckets, indexes) {
   await triggerDeferedIndexes(buckets, defered);
 }
 
+async function counter(bucket, key, delta, options) {
+  return new Promise((resolve, reject) => {
+    bucket.counter(key, delta, options, (err, res) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(res);
+      }
+    });
+  });
+}
+
 module.exports = {
   connectCluster,
   openBucket,
@@ -297,4 +309,5 @@ module.exports = {
   upsert,
   upsertViews,
   buildIndexes,
+  counter
 };
