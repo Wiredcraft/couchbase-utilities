@@ -294,6 +294,76 @@ async function counter(bucket, key, delta, options) {
   });
 }
 
+// Operations on the sub docs
+async function createSubItem(bucket, docId, subId, item) {
+  return new Promise((resolve, reject) => {
+    bucket
+      .mutateIn(docId)
+      .insert(subId, item)
+      .execute((err, res) => {
+        // 1. When error happens on the doc level, the error is stored in err.
+        // 2. When error happens on the sub doc level, the err is a number to indicate
+        //  how many error occurs when performing sub doc operation commands. The actual
+        //  error instances are stored in the res.contents.
+        if (err) {
+          if (typeof err === "object") {
+            reject(err);
+          } else {
+            reject(res.contents);
+          }
+        } else {
+          resolve(res);
+        }
+      });
+  });
+}
+
+async function upsertSubItem(bucket, docId, subId, item) {
+  return new Promise((resolve, reject) => {
+    bucket
+      .mutateIn(docId)
+      .upsert(subId, item)
+      .execute((err, res) => {
+        // 1. When error happens on the doc level, the error is stored in err.
+        // 2. When error happens on the sub doc level, the err is a number to indicate
+        //  how many error occurs when performing sub doc operation commands. The actual
+        //  error instances are stored in the res.contents.
+        if (err) {
+          if (typeof err === "object") {
+            reject(err);
+          } else {
+            reject(res.contents);
+          }
+        } else {
+          resolve(res);
+        }
+      });
+  });
+}
+
+async function removeSubItem(bucket, docId, subId) {
+  return new Promise((resolve, reject) => {
+    bucket
+      .mutateIn(docId)
+      .remove(subId)
+      .execute((err, res) => {
+        // 1. When error happens on the doc level, the error is stored in err.
+        // 2. When error happens on the sub doc level, the err is a number to indicate
+        //  how many error occurs when performing sub doc operation commands. The actual
+        //  error instances are stored in the res.contents.
+        if (err) {
+          if (typeof err === "object") {
+            reject(err);
+          } else {
+            reject(res.contents);
+          }
+        } else {
+          resolve(res);
+        }
+      });
+  });
+}
+
 module.exports = {
   connectCluster,
   openBucket,
@@ -309,5 +379,8 @@ module.exports = {
   upsert,
   upsertViews,
   buildIndexes,
-  counter
+  counter,
+  createSubItem,
+  upsertSubItem,
+  removeSubItem,
 };
