@@ -49,6 +49,18 @@ function getDoc(bucket, key) {
   });
 }
 
+function getDocs(bucket, keys) {
+  return new Promise((resolve, reject) => {
+    bucket.getMulti(keys, (err, res) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(res);
+      }
+    });
+  });
+}
+
 function removeDoc(bucket, key) {
   return new Promise((resolve, reject) => {
     bucket.remove(key, (err, res) => {
@@ -373,6 +385,7 @@ module.exports = {
   query,
   ViewQuery,
   getDoc,
+  getDocs,
   removeDoc,
   delay,
   paginate,
